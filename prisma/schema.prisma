@@ -1,0 +1,55 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rpds      RPD[]
+  gmts      GMT[]
+}
+
+model RPD {
+  id                   String   @id @default(uuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
+  dataHora             DateTime @default(now())
+  
+  // Campos clínicos (devem ser criptografados na camada de aplicação antes de salvar)
+  situacao             String
+  pensamentoAutomatico String
+  emocoesIniciais      String
+  comportamento        String
+  distorcoesCognitivas String
+  respostaAlternativa  String
+  emocoesFinais        String
+  
+  grauCrencaInicial    Int      // 0 a 100
+  grauCrencaFinal      Int      // 0 a 100
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model GMT {
+  id                 String   @id @default(uuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  dataHora           DateTime @default(now())
+  
+  gatilho            String   // Criptografado na aplicação
+  intensidadeImpulso Int      // 0 a 10
+  tecnicaUtilizada   String   // ex: 'Urge Surfing', 'Adiar 15 min'
+  sucesso            Boolean
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
