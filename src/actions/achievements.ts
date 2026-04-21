@@ -20,7 +20,7 @@ export async function getUserAchievements() {
     });
 
     // Transform to include unlocked status
-    const achievements = allAchievements.map(ach => {
+    const achievements = allAchievements.map((ach: (typeof allAchievements)[number]) => {
       const userAch = ach.users[0];
       return {
         id: ach.id,
