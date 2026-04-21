@@ -25,7 +25,11 @@ export default function JournalPage() {
     try {
       const result = await getUserJournalEntries();
       if (result.data) {
-        setEntries(result.data);
+        const transformedEntries = result.data.map((e: any) => ({
+          ...e,
+          tags: e.tags ? JSON.parse(e.tags) : [],
+        }));
+        setEntries(transformedEntries);
       }
     } catch (error) {
       console.error('Erro ao carregar diário:', error);

@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from './prisma';
+import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { encrypt, decrypt } from '@/lib/encryption';
 
@@ -127,7 +127,7 @@ export async function getRPDStats() {
 
   const distortionCounts: Record<string, number> = {};
   rpds.forEach(r => {
-    const distortions: string[] = JSON.parse(r.distrocoesCognitivas);
+    const distortions: string[] = JSON.parse(r.distorcoesCognitivas);
     distortions.forEach(d => {
       distortionCounts[d] = (distortionCounts[d] || 0) + 1;
     });

@@ -13,7 +13,7 @@ export async function getUserAchievements() {
     // Get all achievements with user progress
     const allAchievements = await prisma.achievement.findMany({
       include: {
-        userAchievements: {
+        users: {
           where: { userId: user.id },
         },
       },
@@ -21,14 +21,14 @@ export async function getUserAchievements() {
 
     // Transform to include unlocked status
     const achievements = allAchievements.map(ach => {
-      const userAch = ach.userAchievements[0];
+      const userAch = ach.users[0];
       return {
         id: ach.id,
         name: ach.name,
         description: ach.description,
         icon: ach.icon,
         unlocked: !!userAch,
-        unlockedAt: userAch?.unlockedAt || null,
+        unlockedAt: userAch?.earnedAt || null,
       };
     });
 
@@ -42,13 +42,18 @@ export async function getUserAchievements() {
 // Helper function to check and unlock achievements
 export async function checkAndUnlockAchievements(userId: string, type: string, count?: number) {
   try {
-    const achievements = await prisma.achievement.findMany({
-      where: { requirementType: type },
-    });
+    const achievements = await prisma.achievement.findMany();
 
     const unlocked: string[] = [];
 
     for (const achievement of achievements) {
+      let reqConfig: any = {};
+      try {
+        reqConfig = JSON.parse(achievement.requirement);
+      } catch(e) {}
+      
+      if (reqConfig.type !== type) continue;
+
       // Check if already unlocked
       const existing = await prisma.userAchievement.findFirst({
         where: {
@@ -64,27 +69,11 @@ export async function checkAndUnlockAchievements(userId: string, type: string, c
 
       switch (type) {
         case 'RPD_ENTRIES':
-          if (count !== undefined && count >= achievement.requirementValue) {
-            requirementMet = true;
-          }
-          break;
         case 'GMT_SESSIONS':
-          if (count !== undefined && count >= achievement.requirementValue) {
-            requirementMet = true;
-          }
-          break;
         case 'MOOD_LOGS':
-          if (count !== undefined && count >= achievement.requirementValue) {
-            requirementMet = true;
-          }
-          break;
         case 'STREAK_DAYS':
-          if (count !== undefined && count >= achievement.requirementValue) {
-            requirementMet = true;
-          }
-          break;
         case 'GOALS_COMPLETED':
-          if (count !== undefined && count >= achievement.requirementValue) {
+          if (count !== undefined && reqConfig.value !== undefined && count >= reqConfig.value) {
             requirementMet = true;
           }
           break;

@@ -13,7 +13,7 @@ const DISTORTIONS = [
   { id: 'filtro-negativo', label: 'Filtro Negativo', desc: 'Focar apenas no negativo e ignorar o positivo.' }
 ];
 
-export default function RPDForm({ userId = "mock-user-id" }: { userId?: string }) {
+export default function RPDForm() {
   const [step, setStep] = useState(1);
   const totalSteps = 6;
 
@@ -49,7 +49,6 @@ export default function RPDForm({ userId = "mock-user-id" }: { userId?: string }
   const submitRPD = async () => {
     // Modo discreto e seguro de enviar.
     await createRPD({
-      userId,
       situacao,
       pensamentoAutomatico: pensamento,
       emocoesIniciais: emocoes,

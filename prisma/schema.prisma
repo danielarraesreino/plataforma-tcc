@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
+  id              String            @id @default(uuid())
+  email           String            @unique
   name            String?
   passwordHash    String?
-  theme           String    @default("light") // light, dark
-  language        String    @default("pt-BR")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  theme           String            @default("light") // light, dark
+  language        String            @default("pt-BR")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   lastLoginAt     DateTime?
-  streakCount     Int       @default(0)
-  totalStreakDays Int       @default(0)
+  streakCount     Int               @default(0)
+  totalStreakDays Int               @default(0)
   rpds            RPD[]
   gmts            GMT[]
   moodLogs        MoodLog[]
@@ -40,11 +40,11 @@ model Session {
 }
 
 model RPD {
-  id                   String   @id @default(uuid())
-  userId               String
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dataHora             DateTime @default(now())
-  
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dataHora DateTime @default(now())
+
   // Campos clínicos (devem ser criptografados na camada de aplicação antes de salvar)
   situacao             String
   pensamentoAutomatico String
@@ -54,103 +54,103 @@ model RPD {
   respostaAlternativa  String
   emocoesFinais        String // JSON stringified
   tags                 String? // JSON stringified array
-  
-  grauCrencaInicial    Int      // 0 a 100
-  grauCrencaFinal      Int      // 0 a 100
-  
-  isDeleted            Boolean  @default(false)
-  deletedAt            DateTime?
 
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  grauCrencaInicial Int // 0 a 100
+  grauCrencaFinal   Int // 0 a 100
+
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([dataHora])
 }
 
 model GMT {
-  id                 String   @id @default(uuid())
-  userId             String
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dataHora           DateTime @default(now())
-  
-  gatilho            String   // Criptografado na aplicação
-  intensidadeImpulso Int      // 0 a 10
-  intensidadeFinal   Int?     // 0 a 10
-  tecnicaUtilizada   String   // ex: 'Urge Surfing', 'Adiar 15 min'
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dataHora DateTime @default(now())
+
+  gatilho            String // Criptografado na aplicação
+  intensidadeImpulso Int // 0 a 10
+  intensidadeFinal   Int? // 0 a 10
+  tecnicaUtilizada   String // ex: 'Urge Surfing', 'Adiar 15 min'
   sucesso            Boolean
   notas              String?
   tags               String? // JSON stringified array
-  
-  isDeleted          Boolean  @default(false)
-  deletedAt          DateTime?
-  
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([dataHora])
 }
 
 model MoodLog {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  timestamp   DateTime @default(now())
-  
-  mood        Int      // 1-10
-  emotions    String   // JSON stringified array
-  notes       String?
-  triggers    String?  // JSON stringified array
-  activities  String?  // JSON stringified array
-  
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timestamp DateTime @default(now())
+
+  mood       Int // 1-10
+  emotions   String // JSON stringified array
+  notes      String?
+  triggers   String? // JSON stringified array
+  activities String? // JSON stringified array
+
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([timestamp])
 }
 
 model Goal {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   title       String
   description String?
-  category    String   // health, learning, relationships, career, etc.
-  
-  startDate   DateTime
-  endDate     DateTime?
-  
-  targetValue Int?     // e.g., meditate 10 times
+  category    String // health, learning, relationships, career, etc.
+
+  startDate DateTime
+  endDate   DateTime?
+
+  targetValue  Int? // e.g., meditate 10 times
   currentValue Int     @default(0)
-  unit        String?  // e.g., "times", "days"
-  
-  status      String   @default("active") // active, completed, paused, abandoned
-  priority    String   @default("medium") // low, medium, high
-  
-  milestones  String?  // JSON stringified array
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  unit         String? // e.g., "times", "days"
+
+  status   String @default("active") // active, completed, paused, abandoned
+  priority String @default("medium") // low, medium, high
+
+  milestones String? // JSON stringified array
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([status])
 }
 
 model Journal {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  date      DateTime @default(now())
-  content   String   // Encrypted
-  type      String   @default("gratitude") // gratitude, reflection, free
-  mood      Int?     // 1-10
-  tags      String?  // JSON stringified array
-  
-  isPrivate Boolean  @default(true)
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date    DateTime @default(now())
+  content String // Encrypted
+  type    String   @default("gratitude") // gratitude, reflection, free
+  mood    Int? // 1-10
+  tags    String? // JSON stringified array
+
+  isPrivate Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -159,63 +159,63 @@ model Journal {
 }
 
 model Achievement {
-  id          String   @id @default(uuid())
-  name        String   @unique
+  id          String  @id @default(uuid())
+  name        String  @unique
   description String
   icon        String?
-  category    String   // streak, milestone, therapeutic, wellness
-  requirement String   // JSON config for achievement
-  
-  createdAt   DateTime @default(now())
-  
-  users       UserAchievement[]
+  category    String // streak, milestone, therapeutic, wellness
+  requirement String // JSON config for achievement
+
+  createdAt DateTime @default(now())
+
+  users UserAchievement[]
 }
 
 model UserAchievement {
-  id            String   @id @default(uuid())
+  id            String      @id @default(uuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   achievementId String
   achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
-  
-  earnedAt      DateTime @default(now())
-  progress      Int      @default(0)
-  
+
+  earnedAt DateTime @default(now())
+  progress Int      @default(0)
+
   @@unique([userId, achievementId])
   @@index([userId])
 }
 
 model SafetyPlan {
-  id         String   @id @default(uuid())
-  userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   warningSigns     String? // JSON stringified array
   copingStrategies String? // JSON stringified array
   socialContacts   String? // JSON stringified array of {name, phone, relationship}
   professionals    String? // JSON stringified array of {name, phone, specialty}
   safePlaces       String? // JSON stringified array
   reasonsToLive    String? // JSON stringified array
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Reminder {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  title     String
-  message   String?
-  type      String   // rpd, gmt, mood, goal, mindfulness
-  schedule  String   // cron-like or simple: daily, weekly
-  
-  time      String   // HH:MM format
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title    String
+  message  String?
+  type     String // rpd, gmt, mood, goal, mindfulness
+  schedule String // cron-like or simple: daily, weekly
+
+  time       String // HH:MM format
   daysOfWeek String? // JSON array [0,1,2,3,4,5,6] for Sun-Sat
-  
-  isActive  Boolean  @default(true)
-  
+
+  isActive Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -224,53 +224,54 @@ model Reminder {
 }
 
 model EducationalContent {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
-  category    String   // cbt, mindfulness, anxiety, depression, habits
-  contentType String   // article, video, quiz, exercise
-  content     String   // HTML or JSON
-  difficulty  String   @default("beginner")
+  category    String // cbt, mindfulness, anxiety, depression, habits
+  contentType String // article, video, quiz, exercise
+  content     String // HTML or JSON
+  difficulty  String  @default("beginner")
   durationMin Int?
-  
-  published   Boolean  @default(false)
-  order       Int      @default(0)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  published Boolean @default(false)
+  order     Int     @default(0)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  quizQuestions QuizQuestion[]
 
   @@index([category])
   @@index([published])
 }
 
 model QuizQuestion {
-  id           String   @id @default(uuid())
-  contentId    String
-  content      EducationalContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  
+  id        String             @id @default(uuid())
+  contentId String
+  content   EducationalContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
   question     String
-  options      String   // JSON array of options
+  options      String // JSON array of options
   correctIndex Int
   explanation  String?
-  
-  order        Int      @default(0)
+
+  order Int @default(0)
 
   @@index([contentId])
 }
 
 model BreathingExercise {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String?
-  
-  inhaleSec   Int      @default(4)
-  holdSec     Int      @default(4)
-  exhaleSec   Int      @default(4)
-  pauseSec    Int      @default(0)
-  
-  cycles      Int      @default(5)
-  
-  category    String   @default("relaxation")
-  
-  createdAt   DateTime @default(now())
+
+  inhaleSec Int @default(4)
+  holdSec   Int @default(4)
+  exhaleSec Int @default(4)
+  pauseSec  Int @default(0)
+
+  cycles Int @default(5)
+
+  category String @default("relaxation")
+
+  createdAt DateTime @default(now())
 }

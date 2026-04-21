@@ -18,8 +18,9 @@ export async function addMoodLog(score: number, note?: string) {
     await prisma.moodLog.create({
       data: {
         userId: user.id,
-        score,
-        note: note || null,
+        mood: score,
+        notes: note || null,
+        emotions: '[]', // Required field in schema
       },
     });
 
@@ -42,7 +43,7 @@ export async function getUserMoodLogs() {
 
     const logs = await prisma.moodLog.findMany({
       where: { userId: user.id },
-      orderBy: { date: 'desc' },
+      orderBy: { timestamp: 'desc' },
       take: 100,
     });
 

@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from './prisma';
+import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { encrypt, decrypt } from '@/lib/encryption';
 

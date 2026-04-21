@@ -11,7 +11,7 @@ const COPING_CARDS = [
   "Posso observar esse sentimento sem precisar agir sobre ele."
 ];
 
-export default function GMTDashboard({ userId = "mock-user-id" }: { userId?: string }) {
+export default function GMTDashboard() {
   // Timer State
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -74,7 +74,6 @@ export default function GMTDashboard({ userId = "mock-user-id" }: { userId?: str
 
   const handleSave = async () => {
     await createGMT({
-      userId,
       gatilho,
       intensidadeImpulso: intensidade,
       tecnicaUtilizada: tecnica,

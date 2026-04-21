@@ -7,7 +7,7 @@ interface Achievement {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: string | null;
   unlocked: boolean;
   unlockedAt: Date | null;
 }

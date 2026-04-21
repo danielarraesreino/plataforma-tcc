@@ -12,7 +12,7 @@ export async function getEducationalContent(category?: string, type?: string) {
 
     const where: any = {};
     if (category) where.category = category;
-    if (type) where.type = type;
+    if (type) where.contentType = type;
 
     const contents = await prisma.educationalContent.findMany({
       where,
@@ -52,7 +52,7 @@ export async function seedEducationalContent() {
       {
         title: 'Entendendo a Ansiedade',
         category: 'Ansiedade',
-        type: 'article' as const,
+        contentType: 'article' as const,
         content: `A ansiedade é uma resposta natural do nosso corpo ao estresse. Ela se torna um problema quando é excessiva ou persistente.
 
 **Sintomas comuns:**
@@ -72,12 +72,12 @@ export async function seedEducationalContent() {
 5. Manter uma rotina de sono saudável
 
 Lembre-se: buscar ajuda profissional é fundamental quando a ansiedade interfere na sua qualidade de vida.`,
-        duration: '5 min',
+        durationMin: 5,
       },
       {
         title: 'Técnica de Respiração 4-7-8',
         category: 'Ansiedade',
-        type: 'exercise' as const,
+        contentType: 'exercise' as const,
         content: `Esta técnica de respiração é poderosa para reduzir a ansiedade e promover o relaxamento.
 
 **Como fazer:**
@@ -94,13 +94,13 @@ Lembre-se: buscar ajuda profissional é fundamental quando a ansiedade interfere
 - Pratique 2 vezes ao dia
 - Não se preocupe se não conseguir os tempos exatos no início
 - O importante é a proporção 4:7:8`,
-        duration: '3 min',
+        durationMin: 3,
       },
       // Depression articles
       {
         title: 'Compreendendo a Depressão',
         category: 'Depressão',
-        type: 'article' as const,
+        contentType: 'article' as const,
         content: `A depressão é um transtorno de humor que afeta como você se sente, pensa e funciona.
 
 **Sintomas principais:**
@@ -121,13 +121,13 @@ Lembre-se: buscar ajuda profissional é fundamental quando a ansiedade interfere
 - Conexões sociais
 
 A depressão tem tratamento. Buscar ajuda é o primeiro passo.`,
-        duration: '6 min',
+        durationMin: 6,
       },
       // CBT articles
       {
         title: 'O Que é Terapia Cognitivo-Comportamental?',
         category: 'TCC',
-        type: 'article' as const,
+        contentType: 'article' as const,
         content: `A Terapia Cognitivo-Comportamental (TCC) é uma abordagem psicoterapêutica baseada em evidências.
 
 **Princípios fundamentais:**
@@ -149,12 +149,12 @@ A depressão tem tratamento. Buscar ajuda é o primeiro passo.`,
 - Treinamento de habilidades sociais
 
 A TCC é eficaz para diversos transtornos: ansiedade, depressão, TOC, fobias, e mais.`,
-        duration: '7 min',
+        durationMin: 7,
       },
       {
         title: 'Identificando Distorções Cognitivas',
         category: 'TCC',
-        type: 'article' as const,
+        contentType: 'article' as const,
         content: `Distorções cognitivas são padrões de pensamento irracionais que contribuem para emoções negativas.
 
 **Principais distorções:**
@@ -190,13 +190,13 @@ A TCC é eficaz para diversos transtornos: ansiedade, depressão, TOC, fobias, e
     - Se culpar por eventos fora do seu controle
 
 Reconhecer essas distorções é o primeiro passo para modificá-las.`,
-        duration: '8 min',
+        durationMin: 8,
       },
       // Mindfulness
       {
         title: 'Introdução ao Mindfulness',
         category: 'Mindfulness',
-        type: 'article' as const,
+        contentType: 'article' as const,
         content: `Mindfulness (atenção plena) é a prática de estar presente no momento, sem julgamento.
 
 **Benefícios comprovados:**
@@ -221,12 +221,12 @@ Reconhecer essas distorções é o primeiro passo para modificá-las.`,
    - Faça uma tarefa diária com total atenção
 
 **Dica:** Comece com 5 minutos por dia e aumente gradualmente. A consistência é mais importante que a duração.`,
-        duration: '5 min',
+        durationMin: 5,
       },
       {
         title: 'Meditação Guiada de 5 Minutos',
         category: 'Mindfulness',
-        type: 'exercise' as const,
+        contentType: 'exercise' as const,
         content: `Uma meditação rápida para acalmar a mente e o corpo.
 
 **Instruções:**
@@ -243,13 +243,13 @@ Reconhecer essas distorções é o primeiro passo para modificá-las.`,
 10. Abra os olhos quando se sentir pronto
 
 Lembre-se: não há maneira "errada" de meditar. Cada sessão é única.`,
-        duration: '5 min',
+        durationMin: 5,
       },
       // Stress management
       {
         title: 'Gerenciamento do Estresse',
         category: 'Estresse',
-        type: 'article' as const,
+        contentType: 'article' as const,
         content: `O estresse é uma resposta natural, mas o estresse crônico pode prejudicar a saúde.
 
 **Sinais de estresse excessivo:**
@@ -283,16 +283,19 @@ Lembre-se: não há maneira "errada" de meditar. Cada sessão é única.`,
 
 7. **Busque apoio profissional**
    - Terapia pode ajudar a desenvolver estratégias`,
-        duration: '6 min',
+        durationMin: 6,
       },
     ];
 
     for (const content of contents) {
-      await prisma.educationalContent.upsert({
+      const existing = await prisma.educationalContent.findFirst({
         where: { title: content.title },
-        update: {},
-        create: content,
       });
+      if (!existing) {
+        await prisma.educationalContent.create({
+          data: content,
+        });
+      }
     }
 
     return { success: true, count: contents.length };

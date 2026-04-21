@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { logout, getCurrentUser } from '@/actions/auth';
+import { logoutUser as logout, getCurrentUser } from '@/lib/auth';
 
 interface User {
   id: string;

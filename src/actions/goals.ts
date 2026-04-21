@@ -7,7 +7,8 @@ import { revalidatePath } from 'next/cache';
 export async function createGoal(
   title: string,
   description?: string,
-  targetDate?: Date
+  targetDate?: Date,
+  category: string = 'geral'
 ) {
   try {
     const user = await getCurrentUser();
@@ -24,7 +25,9 @@ export async function createGoal(
         userId: user.id,
         title: title.trim(),
         description: description?.trim() || null,
-        targetDate: targetDate || null,
+        startDate: new Date(),
+        endDate: targetDate || null,
+        category: category,
       },
     });
 
@@ -64,6 +67,7 @@ export async function updateGoal(
     description?: string;
     targetDate?: Date;
     completed?: boolean;
+    category?: string;
   }
 ) {
   try {
@@ -72,9 +76,15 @@ export async function updateGoal(
       return { error: 'Usuário não autenticado' };
     }
 
+    const { targetDate, completed, ...rest } = data;
+    
+    const updateData: any = { ...rest };
+    if (targetDate !== undefined) updateData.endDate = targetDate;
+    if (completed !== undefined) updateData.status = completed ? 'completed' : 'active';
+
     await prisma.goal.update({
       where: { id, userId: user.id },
-      data,
+      data: updateData,
     });
 
     revalidatePath('/goals');

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getSafetyPlan, updateSafetyPlan } from '@/actions/safety-plan';
+import { getSafetyPlan, updateSafetyPlan, type SafetyPlanData } from '@/actions/safety-plan';
 
 export default function SafetyPlanPage() {
   const [loading, setLoading] = useState(false);

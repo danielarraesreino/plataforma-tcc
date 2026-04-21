@@ -28,7 +28,15 @@ export default function GoalsPage() {
     try {
       const result = await getUserGoals();
       if (result.data) {
-        setGoals(result.data);
+        const transformedGoals = result.data.map((g: any) => ({
+          id: g.id,
+          title: g.title,
+          description: g.description,
+          targetDate: g.endDate,
+          completed: g.status === 'completed',
+          createdAt: g.createdAt,
+        }));
+        setGoals(transformedGoals);
       }
     } catch (error) {
       console.error('Erro ao carregar metas:', error);

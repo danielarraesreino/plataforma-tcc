@@ -19,7 +19,7 @@ export async function createJournalEntry(content: string, tags?: string[]) {
       data: {
         userId: user.id,
         content: content.trim(),
-        tags: tags || [],
+        tags: tags ? JSON.stringify(tags) : null,
       },
     });
 

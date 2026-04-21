@@ -17,7 +17,7 @@ export async function getUserStats() {
     // Get current streak
     const moodLogs = await prisma.moodLog.findMany({
       where: { userId: user.id },
-      orderBy: { date: 'desc' },
+      orderBy: { timestamp: 'desc' },
       take: 365,
     });
 
@@ -27,7 +27,7 @@ export async function getUserStats() {
 
     for (let i = 0; i < 365; i++) {
       const hasLog = moodLogs.some(log => {
-        const logDate = new Date(log.date);
+        const logDate = new Date(log.timestamp);
         return logDate.getFullYear() === checkDate.getFullYear() &&
                logDate.getMonth() === checkDate.getMonth() &&
                logDate.getDate() === checkDate.getDate();
@@ -45,7 +45,7 @@ export async function getUserStats() {
     const [totalRpdEntries, totalGmtSessions, completedGoals, totalAchievements] = await Promise.all([
       prisma.rPD.count({ where: { userId: user.id, isDeleted: false } }),
       prisma.gMT.count({ where: { userId: user.id, isDeleted: false } }),
-      prisma.goal.count({ where: { userId: user.id, completed: true } }),
+      prisma.goal.count({ where: { userId: user.id, status: 'completed' } }),
       prisma.userAchievement.count({ where: { userId: user.id } }),
     ]);
 
@@ -56,12 +56,12 @@ export async function getUserStats() {
     const recentMoodLogs = await prisma.moodLog.findMany({
       where: {
         userId: user.id,
-        date: { gte: thirtyDaysAgo },
+        timestamp: { gte: thirtyDaysAgo },
       },
     });
 
     const averageMood = recentMoodLogs.length > 0
-      ? recentMoodLogs.reduce((sum, log) => sum + log.score, 0) / recentMoodLogs.length
+      ? recentMoodLogs.reduce((sum, log) => sum + log.mood, 0) / recentMoodLogs.length
       : null;
 
     return {

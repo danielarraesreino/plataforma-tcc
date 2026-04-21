@@ -7,8 +7,8 @@ interface Content {
   id: string;
   title: string;
   category: string;
-  type: 'article' | 'video' | 'exercise';
-  duration?: string;
+  contentType: string;
+  durationMin?: number | null;
   content: string;
   videoUrl?: string;
 }
@@ -42,7 +42,7 @@ export default function EducationPage() {
 
   const filteredContents = contents.filter(content => {
     if (selectedCategory !== 'all' && content.category !== selectedCategory) return false;
-    if (selectedType !== 'all' && content.type !== selectedType) return false;
+    if (selectedType !== 'all' && content.contentType !== selectedType) return false;
     return true;
   });
 
@@ -74,11 +74,11 @@ export default function EducationPage() {
                 {selectedContent.category}
               </span>
               <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                {selectedContent.type === 'article' ? '📄 Artigo' : 
-                 selectedContent.type === 'video' ? '🎥 Vídeo' : '🧘 Exercício'}
+                {selectedContent.contentType === 'article' ? '📄 Artigo' : 
+                 selectedContent.contentType === 'video' ? '🎥 Vídeo' : '🧘 Exercício'}
               </span>
-              {selectedContent.duration && (
-                <span className="text-sm text-gray-500">⏱️ {selectedContent.duration}</span>
+              {selectedContent.durationMin && (
+                <span className="text-sm text-gray-500">⏱️ {selectedContent.durationMin} min</span>
               )}
             </div>
 
@@ -162,7 +162,7 @@ export default function EducationPage() {
               >
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">
-                    {content.type === 'article' ? '📄' : content.type === 'video' ? '🎥' : '🧘'}
+                    {content.contentType === 'article' ? '📄' : content.contentType === 'video' ? '🎥' : '🧘'}
                   </span>
                   <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full">
                     {content.category}
@@ -172,8 +172,8 @@ export default function EducationPage() {
                 <p className="text-sm text-gray-600 line-clamp-2">
                   {content.content.substring(0, 100)}...
                 </p>
-                {content.duration && (
-                  <p className="text-xs text-gray-500 mt-3">⏱️ {content.duration}</p>
+                {content.durationMin && (
+                  <p className="text-xs text-gray-500 mt-3">⏱️ {content.durationMin} min</p>
                 )}
               </button>
             ))
