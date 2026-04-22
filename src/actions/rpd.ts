@@ -56,7 +56,7 @@ export async function getRPDs(filters?: { startDate?: Date; endDate?: Date; tags
     orderBy: { dataHora: 'desc' },
   });
 
-  return rpds.map(rpd => ({
+  return rpds.map((rpd: (typeof rpds)[number]) => ({
     ...rpd,
     situacao: decrypt(rpd.situacao),
     pensamentoAutomatico: decrypt(rpd.pensamentoAutomatico),
@@ -122,13 +122,13 @@ export async function getRPDStats() {
 
   const totalRPDs = rpds.length;
   const avgBeliefReduction = rpds.length > 0
-    ? rpds.reduce((acc, r) => acc + (r.grauCrencaInicial - r.grauCrencaFinal), 0) / rpds.length
+    ? rpds.reduce((acc: number, r: (typeof rpds)[number]) => acc + (r.grauCrencaInicial - r.grauCrencaFinal), 0) / rpds.length
     : 0;
 
   const distortionCounts: Record<string, number> = {};
-  rpds.forEach(r => {
+  rpds.forEach((r: (typeof rpds)[number]) => {
     const distortions: string[] = JSON.parse(r.distorcoesCognitivas);
-    distortions.forEach(d => {
+    distortions.forEach((d: string) => {
       distortionCounts[d] = (distortionCounts[d] || 0) + 1;
     });
   });
@@ -136,7 +136,7 @@ export async function getRPDStats() {
   // Weekly activity
   const weeklyActivity = Array(7).fill(0);
   const now = new Date();
-  rpds.forEach(r => {
+  rpds.forEach((r: (typeof rpds)[number]) => {
     const date = new Date(r.dataHora);
     const daysAgo = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     if (daysAgo < 7) {

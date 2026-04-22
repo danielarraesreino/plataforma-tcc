@@ -26,7 +26,7 @@ export async function getUserStats() {
     checkDate.setDate(checkDate.getDate() - 1); // Start from yesterday
 
     for (let i = 0; i < 365; i++) {
-      const hasLog = moodLogs.some(log => {
+      const hasLog = moodLogs.some((log: (typeof moodLogs)[number]) => {
         const logDate = new Date(log.timestamp);
         return logDate.getFullYear() === checkDate.getFullYear() &&
                logDate.getMonth() === checkDate.getMonth() &&
@@ -61,7 +61,7 @@ export async function getUserStats() {
     });
 
     const averageMood = recentMoodLogs.length > 0
-      ? recentMoodLogs.reduce((sum, log) => sum + log.mood, 0) / recentMoodLogs.length
+      ? recentMoodLogs.reduce((sum: number, log: (typeof recentMoodLogs)[number]) => sum + log.mood, 0) / recentMoodLogs.length
       : null;
 
     return {

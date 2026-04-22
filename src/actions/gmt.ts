@@ -48,7 +48,7 @@ export async function getGMTs(filters?: { startDate?: Date; endDate?: Date; tags
     orderBy: { dataHora: 'desc' },
   });
 
-  return gmts.map(gmt => ({
+  return gmts.map((gmt: (typeof gmts)[number]) => ({
     ...gmt,
     gatilho: decrypt(gmt.gatilho),
     notas: gmt.notas ? decrypt(gmt.notas) : null,
@@ -108,23 +108,23 @@ export async function getGMTStats() {
 
   const totalGMTs = gmts.length;
   const successRate = totalGMTs > 0
-    ? (gmts.filter(g => g.sucesso).length / totalGMTs) * 100
+    ? (gmts.filter((g: (typeof gmts)[number]) => g.sucesso).length / totalGMTs) * 100
     : 0;
 
-  const avgIntensityReduction = gmts.filter(g => g.intensidadeFinal !== null).length > 0
-    ? gmts.reduce((acc, g) => acc + (g.intensidadeImpulso - (g.intensidadeFinal || 0)), 0) / 
-      gmts.filter(g => g.intensidadeFinal !== null).length
+  const avgIntensityReduction = gmts.filter((g: (typeof gmts)[number]) => g.intensidadeFinal !== null).length > 0
+    ? gmts.reduce((acc: number, g: (typeof gmts)[number]) => acc + (g.intensidadeImpulso - (g.intensidadeFinal || 0)), 0) / 
+      gmts.filter((g: (typeof gmts)[number]) => g.intensidadeFinal !== null).length
     : 0;
 
   const techniqueCounts: Record<string, number> = {};
-  gmts.forEach(g => {
+  gmts.forEach((g: (typeof gmts)[number]) => {
     techniqueCounts[g.tecnicaUtilizada] = (techniqueCounts[g.tecnicaUtilizada] || 0) + 1;
   });
 
   // Weekly activity
   const weeklyActivity = Array(7).fill(0);
   const now = new Date();
-  gmts.forEach(g => {
+  gmts.forEach((g: (typeof gmts)[number]) => {
     const date = new Date(g.dataHora);
     const daysAgo = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     if (daysAgo < 7) {
